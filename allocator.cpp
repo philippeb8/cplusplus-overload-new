@@ -1,8 +1,13 @@
-#ifndef HEADER_INCLUSION_GUARD_OVERLOAD_GLOBAL_NEW_HPP
-#define HEADER_INCLUSION_GUARD_OVERLOAD_GLOBAL_NEW_HPP
+/*
+    Compile with:
+    
+    $ g++ -O2 -fPIC -c -o allocator.o allocator.cpp
+    $ g++ -shared -o liballocator.so allocator.o
+*/
 
 #include <cstddef> // size_t, max_align_t
 #include <cstdlib> // malloc
+#include <stdio.h>
 #include <new>     // required by g++ otherwise we get error for 'noexcept'
 
 std::size_t g_total_allocation = 0u;
@@ -53,24 +58,36 @@ inline void *Implementation_Global_New(std::size_t size) noexcept
     return retval;
 }
 
-void *operator new  (std::size_t const size) noexcept 
-{ 
-    return Implementation_Global_New(size); 
+// no inline, required by [replacement.functions]/3
+void* operator new(std::size_t sz)
+{
+    if (void *ptr = Implementation_Global_New(sz))
+        return ptr;
+        
+    throw std::bad_alloc{}; // required by [new.delete.single]/3
 }
 
-void *operator new[](std::size_t const size) noexcept 
-{ 
-    return Implementation_Global_New(size); 
+// no inline, required by [replacement.functions]/3
+void* operator new[](std::size_t sz)
+{
+    if (void *ptr = Implementation_Global_New(sz))
+        return ptr;
+        
+    throw std::bad_alloc{}; // required by [new.delete.single]/3
 }
 
-void operator delete  (void *const p) noexcept 
-{ 
-    /* Do Nothing */ 
+void operator delete(void* ptr) noexcept
+{
 }
 
-void operator delete[](void *const p) noexcept 
-{ 
-    /* Do Nothing */ 
+void operator delete(void* ptr, std::size_t size) noexcept
+{
 }
 
-#endif
+void operator delete[](void* ptr) noexcept
+{
+}
+
+void operator delete[](void* ptr, std::size_t size) noexcept
+{
+}
