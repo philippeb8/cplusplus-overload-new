@@ -1,3 +1,5 @@
+./test_threadlocal_user is 3.6 times faster than ./test_static_system and ./test_threadlocal_system:
+
 + ./test_static_system  
 Speed: 0.00218425 blocks / nanosecond; Memory usage: 140208 kilobytes  
 Speed: 0.00315419 blocks / nanosecond; Memory usage: 146012 kilobytes  
