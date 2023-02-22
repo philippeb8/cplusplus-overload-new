@@ -1,5 +1,5 @@
 /*
-    Memory allocators beanchmarks.
+    Memory allocators benchmarks.
 
     Note:
     "clang++ -O2" optimization gets rid of the operator overrides
